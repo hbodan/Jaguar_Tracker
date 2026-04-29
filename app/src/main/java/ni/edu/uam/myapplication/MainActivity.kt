@@ -14,45 +14,14 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ni.edu.uam.myapplication.ui.theme.MyApplicationTheme
-
-// Data class para el Usuario
-data class User(
-    val cif: String,
-    val weight: String = "",
-    val sex: String = ""
-)
-
-// Nuevas Data classes
-data class Ejercicio(
-    val nombre: String,
-    val musculo: String
-)
-
-data class DiaEntrenamiento(
-    val nombreDia: String,
-    val ejerciciosSeleccionados: List<Ejercicio>
-)
-
-data class Rutina(
-    val nombre: String,
-    val dias: Int,
-    val planPorDias: List<DiaEntrenamiento>
-)
-
-// Sealed class para las rutas de navegación
-sealed class Screen(val route: String) {
-    object Login : Screen("login")
-    object Configuration : Screen("configuration")
-    object Dashboard : Screen("dashboard")
-    object CreateRoutine : Screen("create_routine")
-}
+import ni.edu.uam.myapplication.ui.Screens.LoginScreen
+import ni.edu.uam.myapplication.ui.Screens.ConfigurationScreen
+import ni.edu.uam.myapplication.models.*
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,80 +84,6 @@ fun GymAppNavigation() {
         }
     }
 }
-
-@Composable
-fun LoginScreen(onNavigateToConfig: (String) -> Unit) {
-    var cif by remember { mutableStateOf("") }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Bienvenido al Gimnasio Universitario", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(32.dp))
-        
-        OutlinedTextField(
-            value = cif,
-            onValueChange = { cif = it },
-            label = { Text("CIF del estudiante") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Button(
-            onClick = {
-                if (cif.isNotBlank()) onNavigateToConfig(cif)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Ingresar")
-        }
-    }
-}
-
-@Composable
-fun ConfigurationScreen(onNavigateToDashboard: (String, String) -> Unit) {
-    var weight by remember { mutableStateOf("") }
-    var sex by remember { mutableStateOf("") }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Configuración Inicial", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(32.dp))
-
-        OutlinedTextField(
-            value = weight,
-            onValueChange = { weight = it },
-            label = { Text("Peso (kg)") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = sex,
-            onValueChange = { sex = it },
-            label = { Text("Sexo") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = { onNavigateToDashboard(weight, sex) },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Guardar y Continuar")
-        }
-    }
-}
-
 @Composable
 fun DashboardScreen(user: User, rutinas: List<Rutina>, onNavigateToCreateRoutine: () -> Unit) {
     Scaffold(
